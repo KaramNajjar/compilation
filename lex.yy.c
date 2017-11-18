@@ -915,16 +915,16 @@ YY_RULE_SETUP
 case 4:
 YY_RULE_SETUP
 #line 59 "lexer.lex"
-{printf("Error (\n"); exit(0);			};
+{return STRING; exit(0);			};
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 60 "lexer.lex"
-{return STRING;BEGIN(INITIAL);}
+{BEGIN(INITIAL); return STRING;}
 	YY_BREAK
 case YY_STATE_EOF(STRING_C):
 #line 61 "lexer.lex"
-{printf("Error unclosed string\n"); exit(0);BEGIN(INITIAL);}
+{BEGIN(INITIAL); printf("Error unclosed string\n"); exit(0);}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
@@ -945,7 +945,7 @@ saveStringText_Hex();
 case 9:
 YY_RULE_SETUP
 #line 67 "lexer.lex"
-{return STRING;BEGIN(INITIAL);}
+{BEGIN(INITIAL);return STRING;}
 	YY_BREAK
 case YY_STATE_EOF(HEXASTRING):
 #line 68 "lexer.lex"
@@ -1033,7 +1033,7 @@ case 25:
 /* rule 25 can match eol */
 YY_RULE_SETUP
 #line 86 "lexer.lex"
-{return ENDSTREAM; BEGIN(INITIAL);}
+{BEGIN(INITIAL); return ENDSTREAM; }
 	YY_BREAK
 case YY_STATE_EOF(ENDSTREAM):
 #line 87 "lexer.lex"

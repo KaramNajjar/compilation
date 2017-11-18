@@ -1,6 +1,8 @@
 %{
 /* Declarations section */
 #include <stdio.h>
+#include "tokens.h"
+
 #define MAX_LEN 2048
 void showToken(char *,char *);
 void showToken2(char *,char *);
@@ -12,7 +14,7 @@ void stringE();
 void stringE1();
 void stringE2(char a);
 void stringE3();
-void error();
+void lexerror();
 void error2();
 void hex2ascii();
 %}
@@ -21,53 +23,53 @@ void hex2ascii();
 digit ([0-9])
 letter ([a-zA-Z])
 whitespace ([\t\n\r ])
-%x ENDSTREAM STRING STRING2
+%x ENDSTREAM STRINGLEX STRING2
 %%
-obj showToken("obj","OBJ");
-endobj showToken("endobj","ENDOBJ");
-\[ showToken("[","LBRACE");
-\] showToken("]","RBRACE");
-\<\< showToken("<<","LDICT");
-\>\> showToken(">>","RDICT");
-(\%)(.)*([\n\r]|[\r][\n]) showToken2(yytext,"COMMENT");
-true showToken("true","TRUE");
-false showToken("false","FALSE");
-((\+|\-)?){digit}+ showToken(yytext,"INTEGER");
-((\+|\-)?)((({digit}*)(\.)({digit}+))|(({digit}+)(\.))) showToken(yytext,"REAL");
-\/({letter}|{digit})({letter}|{digit})* showToken(yytext,"NAME");
+obj 																								return OBJ;
+endobj 																								return ENDOBJ;
+\[ 																									return LBRACE;
+\] 																									return RBRACE;
+\<\< 																								return LDICT;
+\>\> 																								return RDICT;
+
+true 																								return TRUE;
+false   																							return FALSE;
+((\+|\-)?){digit}+ 																					return INTEGER;
+((\+|\-)?)((({digit}*)(\.)({digit}+))|(({digit}+)(\.))) 											return REAL;
+\/({letter}|{digit})({letter}|{digit})* 															return NAME;
 (stream[\r][\n])|(stream[\n\r]) BEGIN(ENDSTREAM);
 <ENDSTREAM>((.)|{whitespace}) streamE();
 <ENDSTREAM>'(0)' printf("");
-<ENDSTREAM>([\r][\n]endstream)|([\n\r]endstream) {showToken5("STREAM");BEGIN(INITIAL);}
+<ENDSTREAM>([\r][\n]endstream)|([\n\r]endstream) 													return STREAM;
 <ENDSTREAM><<EOF>> {printf("Error unclosed stream\n");exit(0);}
 \< BEGIN(STRING2);
 <STRING2>({digit}|[A-Fa-f]){whitespace}*({digit}|[A-Fa-f]) hex2ascii();
 <STRING2>{whitespace}+ {printf("");}
 <STRING2>({digit}|[A-Fa-f]) {printf("Error incomplete byte\n");exit(0);}
-<STRING2>\> {showToken4("STRING");BEGIN(INITIAL);}
+<STRING2>\> 																						{BEGIN(INITIAL);return STRING;}
 <STRING2><<EOF>> {printf("Error unclosed string\n");exit(0);}
-<STRING2>[^A-Fa-f0-9] {error(); exit(0);}
-\( BEGIN(STRING);
-<STRING>\\[0-2][0-7][0-7] stringE3();
-<STRING>\\\) stringE1();
-<STRING>\\\( stringE1();
-<STRING>\\\\ stringE1();
-<STRING>(\\n) stringE2('\n');
-<STRING>(\\b) stringE2('\b');
-<STRING>(\\r) stringE2('\r');
-<STRING>(\\t) stringE2('\t');
-<STRING>(\\f) stringE2('\f');
-<STRING>\( error();
-<STRING>([\n\r]|[\r][\n]) {printf("Error \r\n"); exit(0);}
-<STRING>\\{whitespace}+ stringE();
-<STRING>\\. {error2(); exit(0);}
-<STRING>\) {showToken4("STRING");BEGIN(INITIAL);}
-<STRING><<EOF>> {printf("Error unclosed string\n");exit(0);}
-<STRING>((.)|{whitespace}) streamE();
-null showToken("null","NULL");
+<STRING2>[^A-Fa-f0-9] {lexerror(); exit(0);}
+\( BEGIN(STRINGLEX);
+<STRINGLEX>\\[0-2][0-7][0-7] stringE3();
+<STRINGLEX>\\\) stringE1();
+<STRINGLEX>\\\( stringE1();
+<STRINGLEX>\\\\ stringE1();
+<STRINGLEX>(\\n) stringE2('\n');
+<STRINGLEX>(\\b) stringE2('\b');
+<STRINGLEX>(\\r) stringE2('\r');
+<STRINGLEX>(\\t) stringE2('\t');
+<STRINGLEX>(\\f) stringE2('\f');
+<STRINGLEX>\( lexerror();
+<STRINGLEX>([\n\r]|[\r][\n]) {printf("Error \r\n"); exit(0);}
+<STRINGLEX>\\{whitespace}+ stringE();
+<STRINGLEX>\\. {error2(); exit(0);}
+<STRINGLEX>\) 																						{BEGIN(INITIAL);return STRING;}
+<STRINGLEX><<EOF>> {printf("Error unclosed string\n");exit(0);}
+<STRINGLEX>((.)|{whitespace}) streamE();
+null 																							return NUL;
 {whitespace}+ printf("");
-<<EOF>> {showToken(yytext,"EOF");exit(0);}
-. error();
+<<EOF>> 																						return EF;
+. lexerror();
 %%
 int i=0;
 
@@ -124,7 +126,7 @@ void showToken4(char * type)
  i=0;
  tmp[i]='\0';
 } 
-void error(){
+void lexerror(){
  printf("Error %s\n",yytext);
  exit(0);
 }

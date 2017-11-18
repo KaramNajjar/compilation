@@ -56,7 +56,7 @@ whitespace		([\t\n\r ])
 
 \( 																	BEGIN(STRING_C);
 <STRING_C>([^\(\)]({whitespace})*(\\\n)*(\\\))*(\\\r)*(\\n)*(\\r)*(\\\\)*(\\{octal}{octal}{octal}{letter})*({letter})*({digit})*(\\t)*(\\b)*(\\f)*(\\\()*(\\\))*)*   {saveStringText();}
-<STRING_C>\(    													{printf("Error (\n"); exit(0);			};
+<STRING_C>\(    													{return STRING; exit(0);			};
 <STRING_C>\)														{return STRING;BEGIN(INITIAL);}
 <STRING_C><<EOF>>													{printf("Error unclosed string\n"); exit(0);BEGIN(INITIAL);}
 
