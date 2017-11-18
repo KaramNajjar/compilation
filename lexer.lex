@@ -117,7 +117,7 @@ int powerr(int b,int f)
 
 void printPropriateHexError(){
 	
-	char* revisedStr = malloc(sizeof(string_text_hex));
+	char* revisedStr = (char*)malloc(sizeof(string_text_hex));
 	deleteWhiteSpaces(string_text_hex,revisedStr);
 	
 	if(notHexaText(revisedStr)){
@@ -321,7 +321,7 @@ bool isUnprintable(char ch){
 char* removeUnprintableChars(){
 	
 	int i,j=0,stop = 0;
-	char* revisedStr = malloc(sizeof(MAX_LEN));
+	char* revisedStr = (char*)malloc(sizeof(MAX_LEN));
 	
 	char* str = text;
 	for(i=0;i<text_index;i++){
@@ -375,7 +375,7 @@ char *substring(char *string, int index, int length)
     int counter = length - index;
 
     //printf("\n%d\n", counter);
-    char* array = malloc(sizeof(char) * counter);
+    char* array =(char*) malloc(sizeof(char) * counter);
     if(array != NULL)
     {
         int i = index;
@@ -434,7 +434,7 @@ bool unclosedString(char* str,int len){
 char* HandleHexaInput(char* hexaInput)
 {
 	//printf("I'm in HandleHexaInput");	
-	char* revisedStr = malloc(string_text_len_hex);
+	char* revisedStr = (char*)malloc(string_text_len_hex);
 	deleteWhiteSpaces(hexaInput,revisedStr);
 	
 	if(notHexaText(revisedStr)){
@@ -450,7 +450,7 @@ char* HandleHexaInput(char* hexaInput)
 	//printf("I got a -=>   %s\n",revisedStr);
 	//printf("----------------\n");
 	
-	char* hexToText = malloc(MAX_LEN);
+	char* hexToText = (char*)malloc(MAX_LEN);
 	int i,nextCharIndex = 0;
 	for(i = 0; i < string_text_len_hex ; i+=2){
 		

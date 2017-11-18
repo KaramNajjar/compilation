@@ -5,20 +5,7 @@
 #include "AST.h"
 #define MAX_SIZE 2048
 
-using namespace std;
-
-
-char readTokens();
-void error();
-void match(tokens t);
-ObjNode* Obj();
-BodyNode* Body();
-DictNode* Dict();
-KVListNode* KVList();
-KVNode* KV();
-ExpNode* Exp();
-
-
+	
 extern int yylex();
 tokens current = (tokens)yylex();
 
@@ -32,15 +19,6 @@ void error(){
 	printf("Syntax error\n");
 	exit(0);
 }
-void match(tokens t){
-	
-	if(current == t){
-		current = (tokens)yylex();
-	}else{
-		error();
-	}
-}
-
 ObjNode* Obj(){
 	
 	printf("Producing Obj\n");
@@ -60,7 +38,6 @@ ObjNode* Obj(){
 	}
 	
 	printf("Finished producing Obj\n");
-
 	return root;
 	
 }
@@ -120,7 +97,6 @@ KVListNode* KVList(){
 KVNode* KV(){
 	
 	printf("Producing KV\n");
-	KVNode* node;
 	if(current == NAME){
 		
 		match(NAME);
@@ -152,13 +128,20 @@ ExpNode* Exp(){
 	printf("Finished producing Exp\n");
 	return new ExpNode();
 }
+void match(tokens t){
+	
+	if(current == t){
+		current = (tokens)yylex();
+	}else{
+		error();
+	}
+}
 
 int main(){
 	
-	ObjNode* root = Obj();
-	cout << "ajjjjjjjjjjjjjjjjjjjjjjjjjj" << endl;
+	ObjNode* root = obj();
 	root->prettyPrint();
-	//delete root;
+	delete root;
 
 	
 	return 0;
