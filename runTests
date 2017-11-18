@@ -1,0 +1,29 @@
+#!/bin/bash
+#make
+
+executableA=./a.out
+#executableB=./hw2b
+
+tests=(e1 e2 e3 e4 e5 e6 e7 e8 e9 p1 p2 t1 t2 t3)
+for t in "${tests[@]}"
+do
+	echo -ne "\e[0mRunning Test $t - "
+	${executableA} < tests/$t.in > tests/$t.res
+	diff tests/$t.res tests/$t.out > tests/$t.dif # out is the expected
+	if [ $? -eq 0 ]; then
+    	echo -e "\e[32mis legit\e[0m"
+    	rm tests/$t.dif
+	else
+    	echo -e "\e[101mis not legit\e[0m"
+    fi
+done
+
+#echo -ne "\e[0mRunning Part2 Diff - "
+#${executableB} > tests/b.res
+#diff tests/b.res tests/b.out > tests/b.dif # out is the expected
+#if [ $? -eq 0 ]; then
+#   	echo -e "\e[32mis legit\e[0m"
+#   	rm tests/b.dif
+#else
+#   	echo -e "\e[101mis not legit\e[0m"
+#fi

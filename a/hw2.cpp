@@ -110,9 +110,6 @@ KVListNode* KVList(){
 	
 	if(current == NAME)
 		node = new KVListNode(KV(),KVList());
-	else
-		if(current != RDICT)
-			error();
 	
 	
 	printf("Finished producing KVList\n");
@@ -148,7 +145,6 @@ ExpNode* Exp(){
 		case TRUE: match(TRUE); break;
 		case FALSE: match(FALSE); break;
 		case NUL: match(NUL); break;
-		
 		default : error(); break;
 	}
 	
