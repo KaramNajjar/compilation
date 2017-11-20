@@ -73,7 +73,7 @@ whitespace		([\t\n\r ])
 {rbrace}													return RBRACE;
 {ldict}														return LDICT;
 {rdict}														return RDICT;
-(\%)(.)*([\n\r]|[\r][\n])									{int toend = (yytext[yyleng-1]=='\n' && yytext[yyleng-2]=='\r') ? yyleng-2 : yyleng-1; yytext[toend]='\0';		printf("%d COMMENT %s\n",yylineno-1,yytext);}
+(\%)(.)*([\n\r]|[\r][\n])									{int toend = (yytext[yyleng-1]=='\n' && yytext[yyleng-2]=='\r') ? yyleng-2 : yyleng-1; yytext[toend]='\0';}
 {true}														return TRUE;
 {false}														return FALSE;
 [+-]?{digit}+          										return INTEGER;
