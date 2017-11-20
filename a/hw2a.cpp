@@ -1,11 +1,23 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "tokens.h"
-#include "lex.yy.c"
 #include "AST.h"
 #define MAX_SIZE 2048
 
-	
+using namespace std;
+
+
+char readTokens();
+void error();
+void match(tokens t);
+ObjNode* Obj();
+BodyNode* Body();
+DictNode* Dict();
+KVListNode* KVList();
+KVNode* KV();
+ExpNode* Exp();
+
+
 extern int yylex();
 tokens current = (tokens)yylex();
 
@@ -19,6 +31,15 @@ void error(){
 	printf("Syntax error\n");
 	exit(0);
 }
+void match(tokens t){
+	
+	if(current == t){
+		current = (tokens)yylex();
+	}else{
+		error();
+	}
+}
+
 ObjNode* Obj(){
 	
 	printf("Producing Obj\n");
@@ -38,6 +59,7 @@ ObjNode* Obj(){
 	}
 	
 	printf("Finished producing Obj\n");
+
 	return root;
 	
 }
@@ -83,11 +105,14 @@ DictNode* Dict(){
 KVListNode* KVList(){
 	
 	printf("Producing KVList\n");
-	KVListNode* node;
+	KVListNode* node = new KVListNode();
 	
 	if(current == NAME)
 		node = new KVListNode(KV(),KVList());
-
+	else
+		if(current != RDICT)
+			error();
+	
 	
 	printf("Finished producing KVList\n");
 	return node;
@@ -97,6 +122,7 @@ KVListNode* KVList(){
 KVNode* KV(){
 	
 	printf("Producing KV\n");
+	KVNode* node;
 	if(current == NAME){
 		
 		match(NAME);
@@ -121,6 +147,7 @@ ExpNode* Exp(){
 		case TRUE: match(TRUE); break;
 		case FALSE: match(FALSE); break;
 		case NUL: match(NUL); break;
+		
 		default : error(); break;
 	}
 	
@@ -128,25 +155,16 @@ ExpNode* Exp(){
 	printf("Finished producing Exp\n");
 	return new ExpNode();
 }
-void match(tokens t){
-	
-	if(current == t){
-		current = (tokens)yylex();
-	}else{
-		error();
-	}
-}
 
 int main(){
 	
-	ObjNode* root = obj();
+	ObjNode* root = Obj();
 	root->prettyPrint();
 	delete root;
 
 	
 	return 0;
 }
-
 
 
 

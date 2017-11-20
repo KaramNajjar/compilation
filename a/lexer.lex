@@ -56,15 +56,15 @@ whitespace		([\t\n\r ])
 
 \( 																	BEGIN(STRING_C);
 <STRING_C>([^\(\)]({whitespace})*(\\\n)*(\\\))*(\\\r)*(\\n)*(\\r)*(\\\\)*(\\{octal}{octal}{octal}{letter})*({letter})*({digit})*(\\t)*(\\b)*(\\f)*(\\\()*(\\\))*)*   {saveStringText();}
-<STRING_C>\(    													{printf("Error (\n"); exit(0);			};
-<STRING_C>\)														{return STRING;BEGIN(INITIAL);}
-<STRING_C><<EOF>>													{printf("Error unclosed string\n"); exit(0);BEGIN(INITIAL);}
+<STRING_C>\(    													{return STRING; exit(0);			};
+<STRING_C>\)														{BEGIN(INITIAL); return STRING;}
+<STRING_C><<EOF>>													{BEGIN(INITIAL); printf("Error unclosed string\n"); exit(0);}
 
 \<\>																return STRING;
 
 \<																	BEGIN(HEXASTRING);
 <HEXASTRING>({whitespace}*([^>])*{whitespace}*)*  					saveStringText_Hex();
-<HEXASTRING>\>														{return STRING;BEGIN(INITIAL);}
+<HEXASTRING>\>														{BEGIN(INITIAL);return STRING;}
 <HEXASTRING><<EOF>>													{printPropriateHexError();BEGIN(INITIAL);}
 
 {obj}														return OBJ;
@@ -83,7 +83,7 @@ whitespace		([\t\n\r ])
 ((stream[\r][\n])|(stream[\n\r]))	 BEGIN(ENDSTREAM);
 <ENDSTREAM>((.)|{whitespace})										saveText();
 <ENDSTREAM>'(0)'														;
-<ENDSTREAM>(([\r][\n]endstream)|([\n\r]endstream)) 			{return ENDSTREAM; BEGIN(INITIAL);}
+<ENDSTREAM>(([\r][\n]endstream)|([\n\r]endstream)) 			{BEGIN(INITIAL); return ENDSTREAM; }
 <ENDSTREAM><<EOF>>											{printf("Error unclosed stream\n");exit(0);}
 
 {null}														return NUL;
@@ -492,7 +492,6 @@ void showStringToken(char* name)
 	string_text_hex[0] = '\0';
 	string_text_len_hex = 0;
 }
-
 
 
 
